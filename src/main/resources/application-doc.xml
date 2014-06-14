@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?> 
+<applicationDocs targetNamespace="http://research.sun.com/wadl/2006/10"> 
+    
+    <doc xml:lang="en" title="Lab1 (Membership ReST Reference Implementation)"> 
+        This deployment exemplifies the 'typical' Membership java ReST application layout.  Please use it as a guide for building out your own ReST resource deployment.
+    </doc> 
+</applicationDocs> 
+

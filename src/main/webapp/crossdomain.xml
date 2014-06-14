@@ -1,0 +1,4 @@
+<!--  this file should be at the webserver root in order for Silverlight service calls to work -->
+<cross-domain-policy>
+  <allow-http-request-headers-from domain="*" headers="*"/>
+</cross-domain-policy>

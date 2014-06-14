@@ -1,0 +1,50 @@
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns="http://java.sun.com/xml/ns/javaee" 
+    xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+    http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" 
+    id="WebApp_ID" version="3.0">
+	<display-name>Lab1</display-name>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+
+	<!-- Spring -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/spring-config.xml</param-value>		
+	</context-param>
+
+	<!-- applies log4j configuration -->
+	<listener>
+		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+	</listener>
+
+	<!-- location of log4j config file -->
+	<context-param>
+		<param-name>log4jConfigLocation</param-name>
+		<param-value>/WEB-INF/log4j.properties</param-value>
+	</context-param>
+	    
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+	</listener>
+
+	<!-- Jersey-Spring -->
+	<servlet>
+		<servlet-name>Jersey Spring</servlet-name>
+		<servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
+		<init-param>			
+			<param-name>com.sun.jersey.config.property.packages</param-name>
+			<param-value>com.walmart.membership.lab</param-value>
+		</init-param>		
+		<load-on-startup>1</load-on-startup>		
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Jersey Spring</servlet-name>
+		<url-pattern>/*</url-pattern>
+	</servlet-mapping>	
+</web-app>
