@@ -74,7 +74,7 @@ public class LabRestService {
 		try {
 			long beginConnect = System.currentTimeMillis();
 			// Retrieve data using DAO
-			String text = labDAO.getHW();
+			String text = "hello";
 			long endConnect = System.currentTimeMillis();
 			// Log time
 			logger.info("Service Time: " + (endConnect - beginConnect)/ Constants.ONE_SEC + "s");
@@ -116,7 +116,7 @@ public class LabRestService {
 			//Timing
 			long beginConnect = System.currentTimeMillis();
 			//DAO
-			String text = labDAO.getH(name);
+			String text = "hello"+name;
 			long endConnect = System.currentTimeMillis();
 			logger.info("Service Time: " + (endConnect - beginConnect)/ Constants.ONE_SEC + "s");
 			if (null == text) {

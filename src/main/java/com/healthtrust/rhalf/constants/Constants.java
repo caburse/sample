@@ -36,22 +36,17 @@ public final class Constants {
 	public static final int ERROR_CODE = 900;
 	public static final String DOLLAR = "$";
 		
-	public static final String PROD_PREFIX = "osel";
-	public static final String PROD_PREFIX_A = "osei";
-	public static final String QA_PREFIX = "cerl";
-	public static final String QA_PREFIX_A = "ceri";
-	public static final String DEV_PREFIX = "tstl";
-	public static final String DEV_PREFIX_A = "tsti";
-	public static final String WORKSTATION_PREFIX = "weus";	
+	public static final String PROD_PREFIX = "prod";
+	public static final String QA_PREFIX = "cert";
+	public static final String DEV_PREFIX = "dev";
 	
 	public static final Map<String, String> ENVIRONMENT = new HashMap<String, String>();		 
 	static {
 		ENVIRONMENT.put(PROD_PREFIX, PROD);
-		ENVIRONMENT.put(PROD_PREFIX_A, PROD);
 		ENVIRONMENT.put(QA_PREFIX, QA);
-		ENVIRONMENT.put(QA_PREFIX_A, QA);
-		ENVIRONMENT.put(DEV_PREFIX, DEV);
-		ENVIRONMENT.put(DEV_PREFIX_A, DEV);
-		ENVIRONMENT.put(WORKSTATION_PREFIX, LOCAL);		
+		ENVIRONMENT.put(DEV_PREFIX, DEV);		
 	}
+	
+	/** Cassandra Constants **/
+	public static final String SERVER_DELIMITER=",";
 }
