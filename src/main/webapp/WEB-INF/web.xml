@@ -4,7 +4,7 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
     http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" 
     id="WebApp_ID" version="3.0">
-	<display-name>Lab1</display-name>
+	<display-name>Sample</display-name>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
@@ -39,7 +39,7 @@
 		<servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
 		<init-param>			
 			<param-name>com.sun.jersey.config.property.packages</param-name>
-			<param-value>com.walmart.membership.lab</param-value>
+			<param-value>com.healthtrust.rhalf</param-value>
 		</init-param>		
 		<load-on-startup>1</load-on-startup>		
 	</servlet>

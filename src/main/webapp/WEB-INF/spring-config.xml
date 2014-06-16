@@ -5,18 +5,22 @@
 	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans 
-       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/tx 
-       http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+       http://www.springframework.org/schema/tx/spring-tx.xsd
        http://www.springframework.org/schema/context 
-       http://www.springframework.org/schema/context/spring-context-3.0.xsd
+       http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/aop 
-       http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+       http://www.springframework.org/schema/aop/spring-aop.xsd">
           
     <context:component-scan base-package="com.healthtrust.rhalf"/>
 	
 	<!-- bean post-processor for JPA annotations -->
 	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
-
-	<bean id="order" class="com.healthtrust.rhalf.dao.LabDAOImpl" />
+	
+	<bean id="labDAO" class="com.healthtrust.rhalf.dao.LabDAOImpl">
+		<constructor-arg name="servers" value="127.0.0.1" />
+		<constructor-arg name="port" value="9142" />			
+		<constructor-arg name="keyspace" value="HealthTrust" />
+	</bean>
 </beans>

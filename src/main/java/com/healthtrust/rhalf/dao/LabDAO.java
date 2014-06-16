@@ -1,9 +1,7 @@
 package com.healthtrust.rhalf.dao;
 
-import com.healthtrust.rhalf.exception.BaseWebException;
 
 
-public interface LabDAO {	
-	String getHW() throws BaseWebException;
-	String getH(String name) throws BaseWebException;
+public interface LabDAO {
+	void init(String servers, int port, String keyspace);	
 }

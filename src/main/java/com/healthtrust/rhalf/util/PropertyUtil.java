@@ -10,8 +10,14 @@ import java.util.Properties;
 
 import javax.naming.InitialContext;
 
+import org.apache.cassandra.exceptions.ConfigurationException;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.thrift.transport.TTransportException;
+import org.cassandraunit.CQLDataLoader;
+import org.cassandraunit.CassandraCQLUnit;
+import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
+import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 
 import com.healthtrust.rhalf.constants.Constants;
 import com.healthtrust.rhalf.constants.PropertiesConstants;
@@ -60,7 +66,8 @@ public final class PropertyUtil {
 		LOGGER.debug("BEGIN");		
 		InputStream fileInputStream = null;
 					
-		try {			
+		try {
+			initCassandra();
 			InitialContext initCtx = new InitialContext();
 			String location = (String) initCtx.lookup(PropertiesConstants.PROPERTY_URL_JNDI);
 			fileInputStream = new FileInputStream(new File(location));
@@ -73,6 +80,11 @@ public final class PropertyUtil {
 		}
 		setLogLevel(getInt(PropertiesConstants.LOG_LEVEL));
 		LOGGER.debug("END");
+	}
+	
+	private void initCassandra() throws TTransportException, IOException, ConfigurationException{
+		EmbeddedCassandraServerHelper.startEmbeddedCassandra("/embedded-cassandra.yaml");		
+		LOGGER.debug("Instantiating embedded Cassandra Instance **TESTING ONLY!!!**");		
 	}
 	
 	/**
