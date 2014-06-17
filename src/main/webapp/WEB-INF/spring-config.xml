@@ -24,4 +24,4 @@
 		<constructor-arg name="keyspace" value="HealthTrust" />
 	</bean>
 
-</beans> 
+</beans>
