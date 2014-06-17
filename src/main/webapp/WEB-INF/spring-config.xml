@@ -18,9 +18,10 @@
 	<!-- bean post-processor for JPA annotations -->
 	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
 	
-	<bean id="labDAO" class="com.healthtrust.rhalf.dao.LabDAOImpl">
+	<bean id="patientDAO" class="com.healthtrust.rhalf.dao.PatientDAOImpl">
 		<constructor-arg name="servers" value="127.0.0.1" />
 		<constructor-arg name="port" value="9142" />			
 		<constructor-arg name="keyspace" value="HealthTrust" />
 	</bean>
-</beans>
+
+</beans> 

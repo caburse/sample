@@ -14,9 +14,6 @@ import org.apache.cassandra.exceptions.ConfigurationException;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.thrift.transport.TTransportException;
-import org.cassandraunit.CQLDataLoader;
-import org.cassandraunit.CassandraCQLUnit;
-import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 
 import com.healthtrust.rhalf.constants.Constants;
@@ -34,7 +31,7 @@ public final class PropertyUtil {
 	private static final Logger LOGGER = Logger.getLogger(PropertyUtil.class);	
 	private static PropertyUtil resource = null;
 	private Properties properties = null;
-	private String environment = null;
+	private InputStream fileInputStream = null;
 	
 	/**
 	 * Use Static instantiation PropertyUtil.getInstance() 
@@ -42,8 +39,9 @@ public final class PropertyUtil {
 	private PropertyUtil(){
 		try{
 			loadURL();
+			Runtime.getRuntime().addShutdownHook(new UtilShutdownHook());
 		}catch(IOException ioe){
-			LOGGER.error("Unable to load Property File");
+			LOGGER.error("Unable to load Property File\n"+ioe);
 		}
 		LOGGER.debug("INSTANTIATED");
 	}
@@ -63,8 +61,7 @@ public final class PropertyUtil {
 	 * Try to get property file from JNDI
 	 */
 	private void loadURL() throws IOException{
-		LOGGER.debug("BEGIN");		
-		InputStream fileInputStream = null;
+		LOGGER.debug("BEGIN");
 					
 		try {
 			initCassandra();
@@ -76,6 +73,7 @@ public final class PropertyUtil {
 			
 			LOGGER.debug("Loading Property File" + location);
 		}catch (Exception e) {
+			LOGGER.debug("No JNDI Settings found. " + e);
 			loadENV();
 		}
 		setLogLevel(getInt(PropertiesConstants.LOG_LEVEL));
@@ -83,7 +81,7 @@ public final class PropertyUtil {
 	}
 	
 	private void initCassandra() throws TTransportException, IOException, ConfigurationException{
-		EmbeddedCassandraServerHelper.startEmbeddedCassandra("/embedded-cassandra.yaml");		
+		EmbeddedCassandraServerHelper.startEmbeddedCassandra("/embedded-cassandra.yaml");	
 		LOGGER.debug("Instantiating embedded Cassandra Instance **TESTING ONLY!!!**");		
 	}
 	
@@ -98,18 +96,17 @@ public final class PropertyUtil {
 			String hostname = InetAddress.getLocalHost().getHostName();
 			String prefix = hostname.substring(Constants.DEFAULT_ZERO, Constants.FOUR);
 			String env = Constants.ENVIRONMENT.get(prefix.toLowerCase());
-			environment=env;
 			fileInputStream = getPropertyFile(env);
 			
 			loadPropertyFile(fileInputStream);
 		} catch (IOException e) {
 			fileInputStream = PropertyUtil.getStream(Constants.DEFAULT_PROPERTY);
 			loadPropertyFile(fileInputStream);
-			LOGGER.error("Loading Default Property file:"+Constants.DEFAULT_PROPERTY);			
+			LOGGER.debug("Loading Default Property file:"+Constants.DEFAULT_PROPERTY+"\n"+e);			
 		}catch (Exception e) {
 			fileInputStream = PropertyUtil.getStream(Constants.DEFAULT_PROPERTY);
 			loadPropertyFile(fileInputStream);
-			LOGGER.error("Loading Default Property file:"+Constants.DEFAULT_PROPERTY);
+			LOGGER.debug("Loading Default Property file:"+Constants.DEFAULT_PROPERTY+"\n"+e);
 		}
 		LOGGER.debug("END");
 	}
@@ -144,7 +141,9 @@ public final class PropertyUtil {
 		try{
 			text = properties.getProperty(urlKey).trim();
 			value = Integer.parseInt(text);
-		}catch(Exception e){LOGGER.error("Couldn't parse "+urlKey +":" + text);}
+		}catch(Exception e){
+			LOGGER.error("Couldn't parse "+urlKey +":" + text+"\n"+e);
+		}
 		return value;				
 	}
 	
@@ -170,14 +169,38 @@ public final class PropertyUtil {
 	 */
 	public static void setLogLevel(int level){
 		switch(level){
-			case ONE: Logger.getRootLogger().setLevel(Level.ALL); LOGGER.info("Logging Level set to LEVEL.ALL"); break;
-			case TWO: Logger.getRootLogger().setLevel(Level.DEBUG); LOGGER.info("Logging Level set to LEVEL.DEBUG"); break;
-			case THREE: Logger.getRootLogger().setLevel(Level.ERROR); LOGGER.info("Logging Level set to LEVEL.ERROR"); break;
-			case FOUR: Logger.getRootLogger().setLevel(Level.FATAL); LOGGER.info("Logging Level set to LEVEL.FATAL"); break;
-			case FIVE: Logger.getRootLogger().setLevel(Level.INFO); LOGGER.info("Logging Level set to LEVEL.INFO"); break;
-			case SIX: Logger.getRootLogger().setLevel(Level.OFF); LOGGER.info("Logging Level set to LEVEL.OFF"); break;
-			case SEVEN: Logger.getRootLogger().setLevel(Level.WARN); LOGGER.info("Logging Level set to LEVEL.WARN"); break;
-			default: Logger.getRootLogger().setLevel(Level.ALL); LOGGER.info("Logging Level defaulted to LEVEL.ALL Please add parameter to properties file for custom logging.");break;
+			case ONE: 
+				Logger.getRootLogger().setLevel(Level.ALL); 
+				LOGGER.info("Logging Level set to LEVEL.ALL"); 
+				break;
+			case TWO: 
+				Logger.getRootLogger().setLevel(Level.DEBUG); 
+				LOGGER.info("Logging Level set to LEVEL.DEBUG"); 
+				break;
+			case THREE:
+				Logger.getRootLogger().setLevel(Level.ERROR);
+				LOGGER.info("Logging Level set to LEVEL.ERROR");
+				break;
+			case FOUR:
+				Logger.getRootLogger().setLevel(Level.FATAL);
+				LOGGER.info("Logging Level set to LEVEL.FATAL");
+				break;
+			case FIVE:
+				Logger.getRootLogger().setLevel(Level.INFO);
+				LOGGER.info("Logging Level set to LEVEL.INFO");
+				break;
+			case SIX:
+				Logger.getRootLogger().setLevel(Level.OFF); 
+				LOGGER.info("Logging Level set to LEVEL.OFF");
+				break;
+			case SEVEN:
+				Logger.getRootLogger().setLevel(Level.WARN);
+				LOGGER.info("Logging Level set to LEVEL.WARN");
+				break;
+			default: 
+				Logger.getRootLogger().setLevel(Level.ALL);
+				LOGGER.info("Logging Level defaulted to LEVEL.ALL Please add parameter to properties file for custom logging.");
+				break;
 		}
 	}
 	
@@ -186,12 +209,15 @@ public final class PropertyUtil {
 	 * @param fileName
 	 * @return
 	 */
+	@SuppressWarnings("resource")
 	public static InputStream getStream(String fileName){
 		InputStream fileInputStream = null;
 		try{
 			fileInputStream = new FileInputStream(new File(fileName));
 			LOGGER.info("Property File:" + fileName);
-		}catch(Exception e){}
+		}catch(Exception e){
+			LOGGER.debug("Attempting to grab resource as stream."+e.getMessage());
+		}
 
 		//Just in case file doesn't exist.
 		if(null == fileInputStream){			
@@ -201,10 +227,6 @@ public final class PropertyUtil {
 		return fileInputStream;
 	}
 	
-	public String getENV(){
-		return environment;
-	}
-	
 	final static int ONE = 1;
 	final static int TWO = 2;
 	final static int THREE = 3;
@@ -212,4 +234,19 @@ public final class PropertyUtil {
 	final static int FIVE = 5;
 	final static int SIX = 6;
 	final static int SEVEN = 7;
+	
+	private class UtilShutdownHook extends Thread{
+				
+		@Override
+		public void run(){
+			try{
+				if(null != fileInputStream){
+					fileInputStream.close();
+				}
+			}catch(IOException ioe){
+				LOGGER.debug("Issue encountered closing input stream "+ioe);
+			}
+		}
+	}
+	
 }

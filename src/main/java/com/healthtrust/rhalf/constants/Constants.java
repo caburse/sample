@@ -5,7 +5,8 @@ import java.util.Map;
 
 public final class Constants {
 
-	private Constants(){}
+	private Constants(){		
+	}
 	
 	public static final int T_POOL_SIZE = 1;
 	public static final long KEEP_ALIVE = 1500;
@@ -19,6 +20,7 @@ public final class Constants {
 	public static final String DELIMITER = "-";
 	public static final long ONE_SEC = 1000;	
 	public static final String ROOT_DIR = "/";
+	public static final String EMAIL_REGEX = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 	
 	/**Environment variables**/
 	public static final String PROD = "prod";
@@ -49,4 +51,6 @@ public final class Constants {
 	
 	/** Cassandra Constants **/
 	public static final String SERVER_DELIMITER=",";
+	public static final String SPACE = " ";
+	public static final String KEY = "id";
 }

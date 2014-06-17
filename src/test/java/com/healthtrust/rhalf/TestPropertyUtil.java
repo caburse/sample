@@ -7,7 +7,7 @@ import com.healthtrust.rhalf.constants.PropertiesConstants;
 import com.healthtrust.rhalf.util.PropertyUtil;
 
 public class TestPropertyUtil {
-	
+		
 	@Test
 	public void testgetPropertyValue(){		
 		String level = PropertyUtil.getInstance().getString(PropertiesConstants.LOG_LEVEL);		
