@@ -47,7 +47,7 @@ public class SampleService {
 	}
 
 	// The constructor that takes an argument is needed for testing.
-	public SampleService(PatientDAO labDAO) {
+	protected SampleService(PatientDAO labDAO) {
 		this.patientDAO = labDAO;
 	}
 		
@@ -58,6 +58,7 @@ public class SampleService {
 	 */
 	@Path("/get/{id: .+}")//: "+Constants.EMAIL_REGEX+" }")
 	@GET
+	 
 	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 	public final Response get(@PathParam("id") String id) {
 		Response response = null;
