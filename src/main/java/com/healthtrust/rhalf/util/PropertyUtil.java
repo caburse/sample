@@ -2,10 +2,8 @@ package com.healthtrust.rhalf.util;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.util.Properties;
 
 import javax.naming.InitialContext;
@@ -16,7 +14,6 @@ import org.apache.log4j.Logger;
 import org.apache.thrift.transport.TTransportException;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 
-import com.healthtrust.rhalf.constants.Constants;
 import com.healthtrust.rhalf.constants.PropertiesConstants;
 
 /**
@@ -58,7 +55,7 @@ public final class PropertyUtil {
 	}
 	
 	/**
-	 * Try to get property file from JNDI
+	 * Try to get property file from JNDI else load default
 	 */
 	private void loadURL() throws IOException{
 		LOGGER.debug("BEGIN");
@@ -73,8 +70,7 @@ public final class PropertyUtil {
 			
 			LOGGER.debug("Loading Property File" + location);
 		}catch (Exception e) {
-			LOGGER.debug("No JNDI Settings found. " + e);
-			loadENV();
+			LOGGER.debug("No JNDI Settings found. " + e);			
 		}
 		setLogLevel(getInt(PropertiesConstants.LOG_LEVEL));
 		LOGGER.debug("END");
@@ -84,33 +80,7 @@ public final class PropertyUtil {
 		EmbeddedCassandraServerHelper.startEmbeddedCassandra("/embedded-cassandra.yaml");	
 		LOGGER.debug("Instantiating embedded Cassandra Instance **TESTING ONLY!!!**");		
 	}
-	
-	/**
-	 * Try to figure out property file from local environment otherwise load default.
-	 */
-	private void loadENV() throws IOException{
-		LOGGER.debug("BEGIN");		
-		InputStream fileInputStream = null;
-					
-		try {			
-			String hostname = InetAddress.getLocalHost().getHostName();
-			String prefix = hostname.substring(Constants.DEFAULT_ZERO, Constants.FOUR);
-			String env = Constants.ENVIRONMENT.get(prefix.toLowerCase());
-			fileInputStream = getPropertyFile(env);
-			
-			loadPropertyFile(fileInputStream);
-		} catch (IOException e) {
-			fileInputStream = PropertyUtil.getStream(Constants.DEFAULT_PROPERTY);
-			loadPropertyFile(fileInputStream);
-			LOGGER.debug("Loading Default Property file:"+Constants.DEFAULT_PROPERTY+"\n"+e);			
-		}catch (Exception e) {
-			fileInputStream = PropertyUtil.getStream(Constants.DEFAULT_PROPERTY);
-			loadPropertyFile(fileInputStream);
-			LOGGER.debug("Loading Default Property file:"+Constants.DEFAULT_PROPERTY+"\n"+e);
-		}
-		LOGGER.debug("END");
-	}
-	
+		
 	/**
 	 * Load property from stream extracted to avoid duplicate calls.
 	 * @param stream
@@ -147,24 +117,27 @@ public final class PropertyUtil {
 		return value;				
 	}
 	
-	/**
-	 * Code that concatenates 
-	 * Constants.PROPERTY_PREFIX + env.toLowerCase()+ Constants.PROPERTY_POSTFIX
-	 * in an attempt to find the property file that follows this naming convention
-	 * @param env
-	 * @return
-	 * @throws FileNotFoundException
-	 */
-	private InputStream getPropertyFile(String env)throws FileNotFoundException{		
-		String file =   Constants.PROPERTY_PREFIX+
-						env.toLowerCase()+
-						Constants.PROPERTY_POSTFIX;		
-		LOGGER.debug("Loading Property File " + file);
-		return PropertyUtil.getStream(file);
-	}
+
+	/** ALL **/
+	final static int ONE = 1;
+	/** DEBUG **/
+	final static int TWO = 2;
+	/** ERROR **/
+	final static int THREE = 3;
+	/** FATAL **/
+	final static int FOUR = 4;
+	/** INFO **/
+	final static int FIVE = 5;
+	/** OFF **/
+	final static int SIX = 6;
+	/** WARN **/
+	final static int SEVEN = 7;
+	/** TRACE **/
+	final static int EIGHT = 8;
 	
 	/**
 	 * Sets logging level of root logger.
+	 * Default being ALL
 	 * @param level
 	 */
 	public static void setLogLevel(int level){
@@ -197,6 +170,10 @@ public final class PropertyUtil {
 				Logger.getRootLogger().setLevel(Level.WARN);
 				LOGGER.info("Logging Level set to LEVEL.WARN");
 				break;
+			case EIGHT:
+				Logger.getRootLogger().setLevel(Level.TRACE);
+				LOGGER.info("Logging Level set to LEVEL.WARN");
+				break;
 			default: 
 				Logger.getRootLogger().setLevel(Level.ALL);
 				LOGGER.info("Logging Level defaulted to LEVEL.ALL Please add parameter to properties file for custom logging.");
@@ -226,15 +203,7 @@ public final class PropertyUtil {
 		}		
 		return fileInputStream;
 	}
-	
-	final static int ONE = 1;
-	final static int TWO = 2;
-	final static int THREE = 3;
-	final static int FOUR = 4;
-	final static int FIVE = 5;
-	final static int SIX = 6;
-	final static int SEVEN = 7;
-	
+		
 	private class UtilShutdownHook extends Thread{
 				
 		@Override
