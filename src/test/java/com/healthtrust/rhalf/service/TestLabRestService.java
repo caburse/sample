@@ -1,4 +1,4 @@
-package com.healthtrust.rhalf;
+package com.healthtrust.rhalf.service;
 
 import javax.ws.rs.core.Response;
 

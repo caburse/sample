@@ -1,4 +1,4 @@
-package com.healthtrust.rhalf;
+package com.healthtrust.rhalf.util;
 
 import org.junit.Assert;
 import org.junit.Test;
